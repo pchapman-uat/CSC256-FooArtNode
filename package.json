@@ -1,0 +1,19 @@
+{
+  "name": "test",
+  "type": "module",
+  "version": "1.0.0",
+  "target": "ES2020", 
+  "description": "",
+  "main": "main.js",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "colorthief": "^2.4.0",
+    "music-metadata": "^9.0.3",
+    "sharp": "^0.33.4"
+  },
+  "scripts": {
+    "build-exe": "nexe main.js --build",
+    "help": "nexe -h"
+  }
+}
