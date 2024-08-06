@@ -21,7 +21,7 @@ class Config {
     }
 }
 
-const CONFIG_PATH = "./config.json";
+const CONFIG_PATH = "./config/config.json";
 
 const CONFIG = new Config();
 
