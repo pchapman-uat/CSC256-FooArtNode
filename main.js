@@ -55,19 +55,34 @@ const lastPLaying =  new NowPlaying();
  */
 const nowPlaying =  new NowPlaying();
 
+var debug = false;
+
 const args = process.argv.slice(2);
 CONFIG.parseJSON(JSON.parse(fs.readFileSync(CONFIG_PATH, "utf-8")));
-if (args.includes('/stop')) {
+if(args.length == 0){
+    console.log("No arguments passed, continuing as usual");
+}
+else if (args.includes('/stop')) {
+    console.log(COLORS.Green+"Stopping application");
     CONFIG.canRun = false;
     fs.writeFileSync(CONFIG_PATH,JSON.stringify(CONFIG), "utf-8")
     process.exit(0);
 }
 else if(args.includes('/forceStart')){
+    console.log(COLORS.Green+"Forcing start");
     CONFIG.canRun = true;
     fs.writeFileSync(CONFIG_PATH, JSON.stringify(CONFIG), "utf-8")
+} 
+else if(args.includes('/debug')){
+    console.log(COLORS.Green+"Debug mode enabled");
+    debug = true;
 }
 
-
+function debugLog(message){
+    if(debug){
+        console.log(message);
+    }
+}
 
 /**
  * Wait for a specified amount of time.
@@ -95,7 +110,7 @@ async function saveCover(parsedAudioFile){
         if (err) {
             return console.log(err);
         }
-        console.log(COLORS.Green+"Image file has been saved");
+        debugLog(COLORS.Green+"Image file has been saved");
     });
 }
 /**
@@ -119,13 +134,13 @@ async function getCommonColorV2(){
         g: color[1],
         b: color[2]
     }
-    console.log(rgb)
+    debugLog(rgb)
     // TODO: Change to async method
     fs.writeFile(CONFIG.export_root+"color.json", JSON.stringify(rgb), function (err) {
         if (err) {
             return console.log(err);
         }
-        console.log(COLORS.Green + "Color JSON has been saved")
+        debugLog(COLORS.Green + "Color JSON has been saved")
     });
 }
 /**
@@ -140,7 +155,7 @@ async function getCommonColorV2(){
  * @see {@link https://www.npmjs.com/package/music-metadata} - Library used to parse audio files
 */
 async function main() {
-    fs.existsSync(CONFIG_PATH) ? console.log(COLORS.Green+"Config file found") : console.log(COLORS.Red+"Config file not found");
+    fs.existsSync(CONFIG_PATH) ? debugLog(COLORS.Green+"Config file found") : debugLog(COLORS.Red+"Config file not found");
     CONFIG.parseJSON(JSON.parse(fs.readFileSync(CONFIG_PATH, "utf-8")));
     if(!fs.existsSync(CONFIG.export_root+PATH)){
         console.log(COLORS.Red+"No JSON file found")
@@ -150,7 +165,7 @@ async function main() {
         process.exit(1)
     }
     let error = await nowPlaying.updateFromJSON(CONFIG.export_root+PATH);
-    console.log(nowPlaying)
+    debugLog(nowPlaying)
     if(error){
         console.log(COLORS.Red+"Invalid JSON format");
         console.log(COLORS.Yellow+`Please make sure the JSON file is valid based on the read me template`);
@@ -161,13 +176,14 @@ async function main() {
         process.exit(1);
     }
     if(nowPlaying.playing == 0){
-        console.log("No song playing")
+        debugLog("No song playing")
     }
+    console.log(COLORS.Green+"Connected!")
     while(true){
         await sleep(1000);
         await nowPlaying.updateFromJSON(CONFIG.export_root+PATH)
         CONFIG.parseJSON(JSON.parse(fs.readFileSync(CONFIG_PATH, "utf-8")));
-        console.log(CONFIG)
+        debugLog(CONFIG)
         if(CONFIG.canRun == false){
             console.log(COLORS.Yellow+"Please make sure the file at canRun file is set to true if this was not expected")
             console.log(COLORS.Red+`Exiting Application in ${exitTime/1000}s`);
@@ -177,7 +193,7 @@ async function main() {
         if(nowPlaying.title == lastPLaying.title || nowPlaying.playing == 0){
     
         } else {
-            console.log("New song playing")
+            console.log(COLORS.Green+"New song playing")
             let file;
             try{
                 file = await parseFile(nowPlaying.path)
