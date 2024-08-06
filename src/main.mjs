@@ -67,6 +67,7 @@ if(args.length == 0){
 else if (args.includes('/stop')) {
     console.log(COLORS.Green+"Stopping application");
     CONFIG.canRun = false;
+    CONFIG.isRunning = false;
     fs.writeFileSync(CONFIG_PATH,JSON.stringify(CONFIG), "utf-8")
     exitNoWait(1)
 }
