@@ -11,16 +11,18 @@ var ROOT = "";
 const PATH = "foo_now_playing.json";
 
 class Config {
-    setAllValues(export_root, canRun) {
+    setAllValues(export_root, canRun, isRunning) {
         this.export_root = export_root;
         this.canRun = canRun;
+        this.isRunning = isRunning;
     }
     parseJSON(data){
         this.canRun = data.canRun;
         this.export_root = data.export_root;
+        this.isRunning = data.isRunning;
     }
 }
-
+``
 const CONFIG_PATH = "./config/config.json";
 
 const CONFIG = new Config();
@@ -66,17 +68,22 @@ else if (args.includes('/stop')) {
     console.log(COLORS.Green+"Stopping application");
     CONFIG.canRun = false;
     fs.writeFileSync(CONFIG_PATH,JSON.stringify(CONFIG), "utf-8")
-    process.exit(0);
+    exitNoWait(1)
 }
 else if(args.includes('/debug')){
     console.log(COLORS.Green+"Debug mode enabled");
     debug = true;
 }
-else if(args.includes("/status")){
+else if(args.includes("/canRun")){
     console.log(CONFIG.canRun)
-    process.exit(0);
+    exitNoWait(1)
+}
+else if(args.includes("/status")){
+    console.log(CONFIG.isRunning)
+    process.exit(1);
 }
 CONFIG.canRun = true;
+CONFIG.isRunning = true;
 fs.writeFileSync(CONFIG_PATH, JSON.stringify(CONFIG), "utf-8")
 
 function debugLog(message){
@@ -161,9 +168,7 @@ async function main() {
     if(!fs.existsSync(CONFIG.export_root+PATH)){
         console.log(COLORS.Red+"No JSON file found")
         console.log(COLORS.Yellow+`Please make sure you have a JSON file named ${CONFIG.export_root+PATH.replace("./","")} in the root of the parent directory of this project`)
-        console.log(COLORS.Red+`Exiting Application in ${exitTime/1000}s`);
-        await sleep(exitTime)
-        process.exit(1)
+        await exit(1);
     }
     let error = await nowPlaying.updateFromJSON(CONFIG.export_root+PATH);
     debugLog(nowPlaying)
@@ -172,9 +177,7 @@ async function main() {
         console.log(COLORS.Yellow+`Please make sure the JSON file is valid based on the read me template`);
         console.log(COLORS.Yellow+"Please check that Foobar2000 is running")
         console.log(`${error}`)
-        console.log(COLORS.Red+`Exiting Application in ${exitTime/1000}s`);
-        await sleep(exitTime)
-        process.exit(1);
+        await exit(1);
     }
     if(nowPlaying.playing == 0){
         console.log("No song playing")
@@ -187,9 +190,7 @@ async function main() {
         debugLog(CONFIG)
         if(CONFIG.canRun == false){
             console.log(COLORS.Yellow+"Please make sure the file at canRun file is set to true if this was not expected")
-            console.log(COLORS.Red+`Exiting Application in ${exitTime/1000}s`);
-            await sleep(exitTime)
-            process.exit(1);
+            await exit(1)
         }
         if(nowPlaying.title == lastPLaying.title || nowPlaying.playing == 0){
     
@@ -206,6 +207,22 @@ async function main() {
         }
         lastPLaying.setNowPlaying(nowPlaying)
     }
+}
+
+async function exit(code) {
+    console.log(COLORS.Red+"Exiting Application in "+exitTime/1000+"s");
+    await sleep(exitTime)
+    onExit(code)
+}
+function exitNoWait(code) {
+    console.log(COLORS.Red+"Exiting Application");
+    onExit(code)
+}
+
+function onExit(code){
+    CONFIG.isRunning = false;
+    fs.writeFileSync(CONFIG_PATH, JSON.stringify(CONFIG), "utf-8")
+    process.exit(code)
 }
 
 main();
