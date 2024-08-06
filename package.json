@@ -14,7 +14,6 @@
   },
   "scripts": {
     "build-exe": "nexe src/main.mjs --build",
-    "build-exe-with-json": "nexe src/main.mjs --build --resource config/config.json",
     "help": "nexe -h"
   }
 }
