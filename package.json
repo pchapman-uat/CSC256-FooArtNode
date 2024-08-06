@@ -14,6 +14,7 @@
   },
   "scripts": {
     "build-exe": "nexe src/main.mjs --build",
-    "help": "nexe -h"
+    "help": "nexe -h",
+    "dev": "node src/main.mjs /debug"
   }
 }

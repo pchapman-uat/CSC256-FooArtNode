@@ -177,7 +177,7 @@ async function main() {
         process.exit(1);
     }
     if(nowPlaying.playing == 0){
-        debugLog("No song playing")
+        console.log("No song playing")
     }
     console.log(COLORS.Green+"Connected!")
     while(true){
