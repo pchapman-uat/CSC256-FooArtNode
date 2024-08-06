@@ -1,4 +1,4 @@
-import NowPlaying from "./NowPlaying.js";
+import NowPlaying from "./NowPlaying.mjs";
 import fs from "fs";
 export default class NowPlayingFS extends NowPlaying {
     async updateFromJSON(path){

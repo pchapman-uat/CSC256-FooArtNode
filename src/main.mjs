@@ -2,7 +2,7 @@ import fs from "fs"
 import { parseFile } from "music-metadata"
 import sharp from "sharp"
 import ColorTheif from "colorthief"
-import NowPlaying from "./classes/NowPlayingFS.js";
+import NowPlaying from "./classes/NowPlayingFS.mjs";
 
 var ROOT = "";
 /**
