@@ -68,15 +68,16 @@ else if (args.includes('/stop')) {
     fs.writeFileSync(CONFIG_PATH,JSON.stringify(CONFIG), "utf-8")
     process.exit(0);
 }
-else if(args.includes('/forceStart')){
-    console.log(COLORS.Green+"Forcing start");
-    CONFIG.canRun = true;
-    fs.writeFileSync(CONFIG_PATH, JSON.stringify(CONFIG), "utf-8")
-} 
 else if(args.includes('/debug')){
     console.log(COLORS.Green+"Debug mode enabled");
     debug = true;
 }
+else if(args.includes("/status")){
+    console.log(CONFIG.canRun)
+    process.exit(0);
+}
+CONFIG.canRun = true;
+fs.writeFileSync(CONFIG_PATH, JSON.stringify(CONFIG), "utf-8")
 
 function debugLog(message){
     if(debug){
