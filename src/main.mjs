@@ -196,7 +196,7 @@ async function main() {
         if(nowPlaying.title == lastPLaying.title || nowPlaying.playing == 0){
     
         } else {
-            console.log(COLORS.Green+"New song playing")
+            console.log(COLORS.Green+"Now Playing: "+nowPlaying.title)
             let file;
             try{
                 file = await parseFile(nowPlaying.path)
